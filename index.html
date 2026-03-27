@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI文章转HTML转长图工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 核心截图库：纯前端实现完整网页长截图 -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .btn-hover { @apply hover:shadow-lg hover:-translate-y-0.5 transition-all; }
+            .panel { @apply bg-white rounded-lg shadow-md p-4 h-full; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-6">
+    <div class="max-w-7xl mx-auto flex flex-col gap-6">
+        <!-- 标题 -->
+        <header class="text-center">
+            <h1 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-gray-800">AI 文章转 HTML 转长图工具</h1>
+            <p class="text-gray-500 mt-2">粘贴代码 → 实时预览 → 一键导出完整长图</p>
+        </header>
+
+        <!-- 操作按钮区 -->
+        <div class="flex flex-wrap gap-3 justify-center">
+            <button onclick="previewHtml()" class="bg-primary text-white px-6 py-3 rounded-lg font-medium btn-hover">
+                🔄 实时预览
+            </button>
+            <button onclick="saveAsImage()" class="bg-green-600 text-white px-6 py-3 rounded-lg font-medium btn-hover">
+                🖼️ 导出完整长图
+            </button>
+            <button onclick="clearCode()" class="bg-red-500 text-white px-6 py-3 rounded-lg font-medium btn-hover">
+                🗑️ 清空代码
+            </button>
+        </div>
+
+        <!-- 主内容区：代码输入 + 预览 -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-220px)] min-h-[500px]">
+            <!-- 左侧：代码输入 -->
+            <div class="panel flex flex-col">
+                <h2 class="font-semibold text-lg mb-2">📝 粘贴 HTML 代码</h2>
+                <textarea id="codeInput" class="flex-1 w-full p-3 border border-gray-200 rounded-lg resize-none font-mono text-sm focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="在这里粘贴你的 HTML 代码..."></textarea>
+            </div>
+
+            <!-- 右侧：预览区域（截图目标） -->
+            <div class="panel flex flex-col">
+                <h2 class="font-semibold text-lg mb-2">👁️ 预览区（将导出此区域完整长图）</h2>
+                <div id="previewContainer" class="flex-1 w-full bg-white border border-gray-200 rounded-lg overflow-auto p-2">
+                    <div id="preview" class="w-[1080px] mx-auto bg-white"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 预览 HTML
+        function previewHtml() {
+            const code = document.getElementById('codeInput').value;
+            const preview = document.getElementById('preview');
+            preview.innerHTML = code;
+        }
+
+        // 2. 一键导出完整长图（核心功能）
+        async function saveAsImage() {
+            const preview = document.getElementById('preview');
+            if (!preview.innerHTML.trim()) {
+                alert('请先粘贴代码并点击【实时预览】！');
+                return;
+            }
+
+            try {
+                // 高清截图配置：完整内容 + 1080p 清晰度
+                const canvas = await html2canvas(preview, {
+                    scale: 2, // 高清画质
+                    useCORS: true,
+                    logging: false,
+                    allowTaint: true
+                });
+
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = `AI文章_${new Date().getTime()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                   } catch (error) {
+        // 静默失败，不提示
+    }
+        }
+
+        // 3. 清空代码
+        function clearCode() {
+            document.getElementById('codeInput').value = '';
+            document.getElementById('preview').innerHTML = '';
+            alert('✅ 已清空所有内容');
+        }
+    </script>
+</body>
+</html>
