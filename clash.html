@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VLESS · 链接转 Clash 配置</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #f5f7fb;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+    .card {
+      max-width: 1000px;
+      width: 100%;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.15), 0 8px 16px -6px rgba(0, 0, 0, 0.05);
+      padding: 2rem 2rem 2rem 2rem;
+      transition: all 0.2s;
+    }
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin: 0 0 0.25rem 0;
+      color: #0b1e33;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h1 span {
+      background: #eef2ff;
+      color: #2e4b9c;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.2rem 1rem;
+      border-radius: 100px;
+      letter-spacing: 0.3px;
+    }
+    .subhead {
+      color: #4a5b6e;
+      margin-bottom: 1.8rem;
+      font-size: 0.98rem;
+      border-left: 4px solid #3b6eff;
+      padding-left: 1rem;
+      background: #f9faff;
+      border-radius: 0 12px 12px 0;
+      line-height: 1.5;
+    }
+    .subhead code {
+      background: #e3e8f5;
+      padding: 0.2rem 0.4rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #1d2b4b;
+      font-family: 'SF Mono', 'JetBrains Mono', monospace;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.6rem;
+    }
+    .input-group label {
+      font-weight: 500;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      color: #2a3e5c;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-group label i {
+      font-style: normal;
+      font-size: 1.1rem;
+      opacity: 0.7;
+    }
+    textarea {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.9rem;
+      border: 2px solid #dde3ed;
+      border-radius: 22px;
+      background: #ffffff;
+      transition: border 0.2s, box-shadow 0.2s;
+      resize: vertical;
+      min-height: 105px;
+      color: #0d1b2e;
+      line-height: 1.5;
+      outline: none;
+    }
+    textarea:focus {
+      border-color: #3b6eff;
+      box-shadow: 0 0 0 4px rgba(59, 110, 255, 0.12);
+    }
+    textarea::placeholder {
+      color: #98a9c0;
+      font-weight: 400;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1.6rem 0 1.8rem;
+    }
+    .btn {
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.98rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: 0.18s ease;
+      background: white;
+      color: #1b2c4a;
+      border: 1.5px solid #cdd7e8;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      flex: 0 1 auto;
+    }
+    .btn-primary {
+      background: #0e1f3d;
+      border: 1.5px solid #0e1f3d;
+      color: white;
+      box-shadow: 0 8px 18px -6px rgba(14, 31, 61, 0.25);
+    }
+    .btn-primary:hover {
+      background: #1a2f55;
+      border-color: #1a2f55;
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: white;
+      border: 1.5px solid #cdd7e8;
+      color: #1e3557;
+    }
+    .btn-secondary:hover {
+      background: #f8faff;
+      border-color: #a5b9d4;
+      transform: translateY(-1px);
+    }
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: none;
+    }
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.5rem 0 0.5rem;
+    }
+    .output-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin: 0;
+      color: #122b44;
+      letter-spacing: -0.2px;
+    }
+    .copy-badge {
+      background: #eef2ff;
+      border-radius: 30px;
+      padding: 0.3rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #28438b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: 0.15s;
+      border: 1px solid #d0ddfa;
+    }
+    .copy-badge:hover {
+      background: #dfe8ff;
+      border-color: #a6bbf0;
+    }
+    pre {
+      background: #0b1424;
+      color: #e1e9f5;
+      padding: 1.5rem 1.5rem;
+      border-radius: 24px;
+      overflow-x: auto;
+      font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+      border: 1px solid #1e2b42;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+    .yaml-key {
+      color: #7cb0ff;
+    }
+    .error-msg {
+      margin-top: 0.8rem;
+      color: #b3403a;
+      background: #ffe9e7;
+      padding: 0.8rem 1.2rem;
+      border-radius: 16px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-left: 5px solid #c0392b;
+    }
+    .success-msg {
+      color: #1c6b3f;
+      background: #e6f6ed;
+      border-left: 5px solid #2e9b5e;
+    }
+    .empty-state {
+      color: #7c8ba5;
+      text-align: center;
+      padding: 0.8rem;
+      font-style: italic;
+      background: #f9fbfe;
+      border-radius: 16px;
+    }
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .footnote {
+      margin-top: 1rem;
+      font-size: 0.78rem;
+      color: #7689a5;
+      text-align: right;
+    }
+    .mt-2 {
+      margin-top: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>
+      🔁 VLESS 转 Clash
+      <span>Reality</span>
+    </h1>
+    <div class="subhead">
+      ⚡ 粘贴 <code>vless://</code> 链接，自动解析为 Clash Meta 格式（YAML 单行 Proxy）。
+    </div>
+
+    <!-- 输入区 -->
+    <div class="input-group">
+      <label for="vlessInput"><i>📎</i> VLESS 链接</label>
+      <textarea id="vlessInput" placeholder="vless://86ea4ef9-6895-4a23-978d-6a6dcbc76e1a@154.201.88.214:33694?encryption=none&security=reality&flow=xtls-rprx-vision&type=tcp&sni=www.paypal.com&pbk=uQ0eHjbz8AYd0sbLkakytxCkyscWf1vexTB2qKHMvR4&fp=chrome#233boy-reality-154.201.88.214">vless://86ea4ef9-6895-4a23-978d-6a6dcbc76e1a@154.201.88.214:33694?encryption=none&security=reality&flow=xtls-rprx-vision&type=tcp&sni=www.paypal.com&pbk=uQ0eHjbz8AYd0sbLkakytxCkyscWf1vexTB2qKHMvR4&fp=chrome#233boy-reality-154.201.88.214</textarea>
+    </div>
+
+    <!-- 按钮区 -->
+    <div class="actions">
+      <button class="btn btn-primary" id="convertBtn">✨ 转换并生成配置</button>
+      <button class="btn btn-secondary" id="clearBtn">🗑️ 清空</button>
+      <button class="btn btn-secondary" id="exampleBtn">📋 示例链接</button>
+    </div>
+
+    <!-- 输出区 -->
+    <div class="output-header">
+      <h2>📄 Clash Meta 配置</h2>
+      <div class="copy-badge" id="copyBtn">
+        <span>📋</span> 复制 YAML
+      </div>
+    </div>
+    <pre id="outputYaml" class="empty-state">— 转换结果将显示在这里 —</pre>
+    <div id="messageBox" class="mt-2"></div>
+    <div class="footnote">
+      支持 reality / vision / tcp / sni / 指纹  |  短ID 留空则输出 <code style="background:#d9e2f0; padding:0.1rem 0.3rem; border-radius:6px;">""</code>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // 获取 DOM 元素
+      const inputEl = document.getElementById('vlessInput');
+      const convertBtn = document.getElementById('convertBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const exampleBtn = document.getElementById('exampleBtn');
+      const outputEl = document.getElementById('outputYaml');
+      const copyBtn = document.getElementById('copyBtn');
+      const messageBox = document.getElementById('messageBox');
+
+      // 默认示例链接 (与题目要求一致)
+      const EXAMPLE_LINK = 'vless://86ea4ef9-6895-4a23-978d-6a6dcbc76e1a@154.201.88.214:33694?encryption=none&security=reality&flow=xtls-rprx-vision&type=tcp&sni=www.paypal.com&pbk=uQ0eHjbz8AYd0sbLkakytxCkyscWf1vexTB2qKHMvR4&fp=chrome#233boy-reality-154.201.88.214';
+
+      // 显示消息 (支持 success/error/info)
+      function showMessage(text, type = 'info') {
+        messageBox.innerHTML = '';
+        if (!text) return;
+        const msgDiv = document.createElement('div');
+        msgDiv.className = type === 'error' ? 'error-msg' : (type === 'success' ? 'error-msg success-msg' : 'error-msg');
+        msgDiv.style.background = type === 'error' ? '#ffe9e7' : (type === 'success' ? '#e6f6ed' : '#eef2fa');
+        msgDiv.style.color = type === 'error' ? '#b3403a' : (type === 'success' ? '#1c6b3f' : '#2f405e');
+        msgDiv.style.borderLeftColor = type === 'error' ? '#c0392b' : (type === 'success' ? '#2e9b5e' : '#3b6eff');
+        msgDiv.innerHTML = (type === 'error' ? '⚠️ ' : (type === 'success' ? '✅ ' : 'ℹ️ ')) + text;
+        messageBox.appendChild(msgDiv);
+      }
+
+      // 清空消息和输出
+      function clearOutput() {
+        outputEl.textContent = '— 转换结果将显示在这里 —';
+        outputEl.className = 'empty-state';
+        messageBox.innerHTML = '';
+      }
+
+      /**
+       * 解析 VLESS 链接
+       * @param {string} raw 链接字符串
+       * @returns {Object|null} 解析结果或 null
+       */
+      function parseVlessLink(raw) {
+        if (!raw || typeof raw !== 'string') return null;
+        const trimmed = raw.trim();
+        if (!trimmed.startsWith('vless://')) {
+          throw new Error('链接必须以 vless:// 开头');
+        }
+
+        // 移除 scheme
+        const withoutScheme = trimmed.slice('vless://'.length);
+        // 分离 fragment (# 后面的备注)
+        let fragment = '';
+        let mainPart = withoutScheme;
+        const hashIndex = withoutScheme.indexOf('#');
+        if (hashIndex !== -1) {
+          fragment = withoutScheme.slice(hashIndex + 1);
+          mainPart = withoutScheme.slice(0, hashIndex);
+        }
+
+        // 分离 query (? 后面的参数)
+        let query = '';
+        let beforeQuery = mainPart;
+        const queryIndex = mainPart.indexOf('?');
+        if (queryIndex !== -1) {
+          query = mainPart.slice(queryIndex + 1);
+          beforeQuery = mainPart.slice(0, queryIndex);
+        }
+
+        // beforeQuery 格式: uuid@host:port
+        const atIndex = beforeQuery.indexOf('@');
+        if (atIndex === -1) {
+          throw new Error('链接格式错误: 缺少 @ 符号 (uuid@host:port)');
+        }
+
+        const uuid = beforeQuery.slice(0, atIndex).trim();
+        const hostPort = beforeQuery.slice(atIndex + 1).trim();
+
+        // 分离 host 和 port
+        const lastColonIndex = hostPort.lastIndexOf(':');
+        if (lastColonIndex === -1) {
+          throw new Error('链接格式错误: 缺少端口 (host:port)');
+        }
+
+        const server = hostPort.slice(0, lastColonIndex).trim();
+        const portStr = hostPort.slice(lastColonIndex + 1).trim();
+        const port = parseInt(portStr, 10);
+        if (isNaN(port) || port <= 0 || port > 65535) {
+          throw new Error(`端口无效: ${portStr}`);
+        }
+
+        // 验证 uuid 基本格式 (非空即可, 不严格要求)
+        if (!uuid) {
+          throw new Error('UUID 不能为空');
+        }
+
+        // 解析 query 参数
+        const params = {};
+        if (query) {
+          query.split('&').forEach(pair => {
+            const [key, value] = pair.split('=');
+            if (key) {
+              // 解码 URI 组件 (比如 shortId 可能有编码)
+              try {
+                params[decodeURIComponent(key)] = value ? decodeURIComponent(value) : '';
+              } catch (e) {
+                params[key] = value || '';
+              }
+            }
+          });
+        }
+
+        // 提取关键参数 (带默认值)
+        const security = params.security || 'none';
+        const flow = params.flow || '';           // 例如 xtls-rprx-vision
+        const type = params.type || 'tcp';
+        const sni = params.sni || params.servername || '';   // sni 或 servername
+        const pbk = params.pbk || '';             // reality public key
+        const fp = params.fp || 'chrome';         // 指纹
+        const shortId = params.sid || params.shortId || '';   // short-id 参数可能叫 sid 或 shortId
+        const encryption = params.encryption || 'none';
+
+        // 是否 reality (根据 security=reality 或 存在 pbk)
+        const isReality = security === 'reality' || (pbk && pbk.length > 0);
+        
+        // 解析端口结束
+
+        return {
+          raw: trimmed,
+          uuid,
+          server,
+          port,
+          fragment,
+          params,
+          // 整理后的字段
+          security,
+          flow,
+          type,
+          sni,
+          pbk,
+          fp,
+          shortId,
+          encryption,
+          isReality,
+          // 额外: 用于生成 servername (优先 sni, 否则使用 server 或 空? 但 reality 一般有 sni)
+        };
+      }
+
+      /**
+       * 根据解析结果生成 Clash Meta 格式的 YAML 字符串 (单行)
+       */
+      function generateClashProxy(parsed) {
+        const {
+          uuid,
+          server,
+          port,
+          fragment,
+          flow,
+          type,
+          sni,
+          pbk,
+          fp,
+          shortId,
+          isReality,
+        } = parsed;
+
+        // 名称: 优先使用 fragment, 否则用 "vless-reality"
+        const name = fragment ? fragment : 'reality-node';
+
+        // 判断 tls: 如果 security=reality 或者有 pbk/sni 等则为 true, 否则 false
+        const tls = isReality || parsed.security === 'tls' || (sni && sni.length > 0 && parsed.security !== 'none') ? true : false;
+        // 但更严谨: 如果是 reality 肯定 true; 如果 security=xtls 之类, 也一般 true. 简化: 非 none 且有 sni 等
+        // 由于 vless 链接大部分是 reality/tls, 按照 reality 链接特征处理
+        // 更明确: 如果 security=reality 或者 security=tls 或者 存在 pbk, 则 tls 为 true
+        let finalTls = false;
+        if (parsed.security === 'reality' || parsed.security === 'tls' || (pbk && pbk.length > 0)) {
+          finalTls = true;
+        } else if (parsed.security === 'none') {
+          finalTls = false;
+        } else {
+          // 默认给 true 因为大多数带 sni 的都要求 tls
+          finalTls = (sni && sni.length > 0);
+        }
+
+        // servername: 优先 sni, 如果没有则使用 server (但现实一般有 sni, 如果没有则留空)
+        const servername = sni || '';
+
+        // 构建 reality-opts 对象 (只要 public-key 或 short-id 有值就构建, 否则也可留空对象?)
+        // 按照题目格式: reality-opts: {public-key: ..., short-id: "..."}
+        // 即使没有 public-key? reality 必须有 pbk. 若没有 pbk 则不适合用 reality-opts, 但为了格式统一我们仍然提供空对象
+        // 但如果是非 reality, 应该忽略 reality-opts? 但题目要求格式里包含 reality-opts, 我们保留.
+        // 更好的逻辑: 如果 isReality 或者 pbk 存在, 就构建, 否则可以构建空对象或不构建。但题目输出样例中即使 pbk 存在也构建
+        // 为了兼容, 始终构建 reality-opts 字段
+        const publicKey = pbk || '';
+        // shortId 需要处理空字符串 -> 展示为 ""
+        const shortIdStr = shortId || '';
+
+        // client-fingerprint: 默认为 chrome, 但取 fp 值 (如果有)
+        const clientFingerprint = fp || 'chrome';
+
+        // 构建对象 (保持字段顺序)
+        const proxyObj = {
+          name: name,
+          server: server,
+          port: port,
+          type: 'vless',
+          uuid: uuid,
+          tls: finalTls,
+          tfo: false,
+          flow: flow || 'xtls-rprx-vision',   // 如果 flow 为空, 仍然给出常见值? 但真实转换应保留原样。为了准确我们保留 flow 字段 (即使空字符串)
+          'skip-cert-verify': false,
+          'reality-opts': {
+            'public-key': publicKey,
+            'short-id': shortIdStr
+          },
+          servername: servername,
+          'client-fingerprint': clientFingerprint,
+          network: type || 'tcp'
+        };
+
+        // 如果 flow 为空字符串, 根据题目可能还是保留? 但字段会存在。不过为了和题目样例格式一致, flow 有值
+        // 若原始没有 flow, 我们保留 '' (但 clash 可能不接受空 flow, 但仅作展示)
+        // 但为了更好, 如果 flow 为空则不加这个字段? 但题目样例有 flow, 我们保留字段。
+        // 可微调: 如果 flow 不存在, 就不显示该key. 但为了通用, 我们保留并赋值为 '' 
+        // 但 Clash Meta 里 flow 为空字符串可能异常, 但转换工具只展示, 没关系。
+
+        // 如果非 reality, 也许不应该有 reality-opts? 但这里按照题目格式保持。
+        // 但如果是普通 tls, 留着也无伤大雅。
+
+        // 手工构建 YAML 风格的字符串 (单行, 类似题目给出的格式)
+        // 使用 JSON 序列化然后再调整? 为了美观手工构建。
+        // 更简单: 构建对象然后用 JSON.stringify 但 key 不加引号; 手工拼字符串。
+        const parts = [];
+        parts.push(`name: ${escapeYamlString(proxyObj.name)}`);
+        parts.push(`server: ${escapeYamlString(proxyObj.server)}`);
+        parts.push(`port: ${proxyObj.port}`);
+        parts.push(`type: ${proxyObj.type}`);
+        parts.push(`uuid: ${escapeYamlString(proxyObj.uuid)}`);
+        parts.push(`tls: ${proxyObj.tls}`);
+        parts.push(`tfo: ${proxyObj.tfo}`);
+        parts.push(`flow: ${escapeYamlString(proxyObj.flow)}`);
+        parts.push(`skip-cert-verify: ${proxyObj['skip-cert-verify']}`);
+        // reality-opts 内联对象
+        const ro = proxyObj['reality-opts'];
+        // 构建 public-key 和 short-id (short-id 需要引号)
+        const publicKeyStr = ro['public-key'] ? ro['public-key'] : '';
+        const shortIdVal = ro['short-id'] ? ro['short-id'] : '';
+        // 短ID 特殊: 如果有值, 用双引号; 如果是空字符串, 显示为 ""
+        const shortIdRendered = shortIdVal ? `"${escapeYamlString(shortIdVal)}"` : `""`;
+        parts.push(`reality-opts: {public-key: ${escapeYamlString(publicKeyStr)}, short-id: ${shortIdRendered}}`);
+        parts.push(`servername: ${escapeYamlString(proxyObj.servername)}`);
+        parts.push(`client-fingerprint: ${escapeYamlString(proxyObj['client-fingerprint'])}`);
+        parts.push(`network: ${escapeYamlString(proxyObj.network)}`);
+
+        // 用花括号包裹, 逗号+空格分隔
+        return `{${parts.join(', ')}}`;
+      }
+
+      // 简单的 YAML 字符串转义 (如果包含特殊字符: 空格, 冒号等, 加上引号)
+      function escapeYamlString(str) {
+        if (str === null || str === undefined) return '""';
+        const s = String(str);
+        // 如果是纯字母数字/下划线/点/连字符/冒号(但冒号可能有歧义), 我们可以不加引号，但为安全: 若包含空格、逗号、{、}、[、]、:、# 等则加双引号并转义内部双引号
+        if (/^[a-zA-Z0-9._:\/@\-]+$/.test(s) && !s.includes(': ')) {
+          // 但如果包含冒号且后面有空格? 简单处理: 若包含空格或特殊字符则加引号
+          if (s.includes(' ') || s.includes(',') || s.includes('"') || s.includes("'") || s.includes('{') || s.includes('}') || s.includes('[') || s.includes(']')) {
+            // 转义双引号
+            const escaped = s.replace(/"/g, '\\"');
+            return `"${escaped}"`;
+          }
+          // 对包含冒号的也加引号更安全
+          if (s.includes(':')) {
+            const escaped = s.replace(/"/g, '\\"');
+            return `"${escaped}"`;
+          }
+          return s;
+        } else {
+          const escaped = s.replace(/"/g, '\\"');
+          return `"${escaped}"`;
+        }
+      }
+
+      // 主转换函数
+      function convert() {
+        messageBox.innerHTML = '';
+        const rawLink = inputEl.value.trim();
+        if (!rawLink) {
+          showMessage('请先输入 VLESS 链接', 'error');
+          clearOutput();
+          return;
+        }
+
+        try {
+          const parsed = parseVlessLink(rawLink);
+          if (!parsed) {
+            throw new Error('解析结果为空');
+          }
+
+          // 部分安全检查: 确保有 server / uuid / port
+          if (!parsed.server || !parsed.uuid || !parsed.port) {
+            throw new Error('链接缺少必要字段 (server / uuid / port)');
+          }
+
+          const yamlLine = generateClashProxy(parsed);
+          outputEl.textContent = yamlLine;
+          outputEl.className = ''; // 移除 empty-state 样式
+          showMessage('转换成功！可复制 YAML 到 Clash 配置。', 'success');
+        } catch (err) {
+          console.error(err);
+          clearOutput();
+          showMessage(`解析失败: ${err.message}`, 'error');
+        }
+      }
+
+      // 清空所有
+      function clearAll() {
+        inputEl.value = '';
+        clearOutput();
+        messageBox.innerHTML = '';
+      }
+
+      // 填入示例链接
+      function fillExample() {
+        inputEl.value = EXAMPLE_LINK;
+        // 可选自动转换
+        convert();
+      }
+
+      // 复制 YAML 到剪贴板
+      function copyYaml() {
+        const yamlText = outputEl.textContent;
+        if (!yamlText || yamlText === '— 转换结果将显示在这里 —' || yamlText.includes('— 转换结果将显示在这里 —')) {
+          showMessage('没有可复制的配置，请先转换。', 'error');
+          return;
+        }
+        navigator.clipboard.writeText(yamlText).then(() => {
+          showMessage('YAML 已复制到剪贴板', 'success');
+        }).catch(() => {
+          // fallback
+          try {
+            const textarea = document.createElement('textarea');
+            textarea.value = yamlText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showMessage('YAML 已复制 (fallback)', 'success');
+          } catch (e) {
+            showMessage('复制失败，请手动复制', 'error');
+          }
+        });
+      }
+
+      // 事件绑定
+      convertBtn.addEventListener('click', convert);
+      clearBtn.addEventListener('click', clearAll);
+      exampleBtn.addEventListener('click', fillExample);
+      copyBtn.addEventListener('click', copyYaml);
+
+      // 输入框支持 Ctrl+Enter 快速转换
+      inputEl.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          convert();
+        }
+      });
+
+      // 初始化时清空输出
+      clearOutput();
+    })();
+  </script>
+</body>
+</html>
